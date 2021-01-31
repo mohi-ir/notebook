@@ -1,13 +1,5 @@
-// import React from "react";
-// //import "devextreme/data/odata/store";
 
-// export default () => (
-//   <React.Fragment>
-//     <h2 className={"content-block"}>Add new Post</h2>
-//   </React.Fragment>
-// );
-
-import React from "react";
+import React, { useState } from "react";
 import { NumberBox } from "devextreme-react/number-box";
 import { SelectBox } from "devextreme-react/select-box";
 import { Switch } from "devextreme-react/switch";
@@ -17,34 +9,34 @@ import { CheckBox } from "devextreme-react/check-box";
 import { TextArea } from "devextreme-react/text-area";
 import { TagBox } from "devextreme-react/tag-box";
 import { europeanUnion } from "./data.js";
+import Button from 'devextreme-react/button';
 
-class NewPost extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      rtlEnabled: false,
-    };
-    this.languages = [
-      "Arabic: Right-to-Left direction",
-      "English: Left-to-Right direction",
-    ];
-    this.displayExpr = "nameEn";
-    this.textValue = "text";
-    this.onLanguageChanged = this.onLanguageChanged.bind(this);
+export const NewPost = () => {
+
+  const [rtlEnabled, setRtlEnabled] = useState(false);
+  const languages = [
+    "Arabic: Right-to-Left direction",
+    "English: Left-to-Right direction",
+  ];
+  let displayExpr = "nameEn";
+   const [title, setTitle] = useState('');
+   const [note, setNote] = useState('');
+  
+  const onLanguageChanged = (args) => {
+    const isRTL = args.value === languages[0];
+    setRtlEnabled({ rtlEnabled: isRTL });
+    setTitle(isRTL ? "نص" : "text");
   }
 
-  onLanguageChanged(args) {
-    const isRTL = args.value === this.languages[0];
-
-    this.displayExpr = isRTL ? "nameAr" : "nameEn";
-    this.setState({ rtlEnabled: isRTL });
-    this.textValue = isRTL ? "نص" : "text";
+  const addNewPost = () => {
+    console.log('new post added', note );
+    setTitle(note);
   }
 
-  render() {
+  
     return (
       <div>
-        <div className={this.state.rtlEnabled ? "dx-rtl" : null}>
+        <div className={rtlEnabled ? "dx-rtl" : null}>
           <div className="options">
             <div className="caption">Options</div>
             <div className="dx-fieldset">
@@ -52,10 +44,10 @@ class NewPost extends React.Component {
                 <div className="dx-field-label">Language</div>
                 <div className="dx-field-value">
                   <SelectBox
-                    items={this.languages}
-                    defaultValue={this.languages[1]}
-                    rtlEnabled={this.state.rtlEnabled}
-                    onValueChanged={this.onLanguageChanged}
+                    items={languages}
+                    defaultValue={languages[1]}
+                    rtlEnabled={rtlEnabled}
+                    onValueChanged={onLanguageChanged}
                   />
                 </div>
               </div>
@@ -67,8 +59,9 @@ class NewPost extends React.Component {
               <div className="dx-field-value">
                 <TextBox
                   showClearButton={true}
-                  defaultValue={this.textValue}
-                  rtlEnabled={this.state.rtlEnabled}
+                  value={title}
+                  rtlEnabled={rtlEnabled}
+                  onValueChanged={e => setTitle(e.value)}
                 />
               </div>
             </div>
@@ -78,7 +71,7 @@ class NewPost extends React.Component {
                 <NumberBox
                   showSpinButtons={true}
                   defaultValue="123"
-                  rtlEnabled={this.state.rtlEnabled}
+                  rtlEnabled={rtlEnabled}
                 />
               </div>
             </div>
@@ -88,8 +81,8 @@ class NewPost extends React.Component {
                 <SelectBox
                   items={europeanUnion}
                   defaultValue={europeanUnion[0]}
-                  rtlEnabled={this.state.rtlEnabled}
-                  displayExpr={this.displayExpr}
+                  rtlEnabled={rtlEnabled}
+                  displayExpr={displayExpr}
                 />
               </div>
             </div>
@@ -99,8 +92,8 @@ class NewPost extends React.Component {
                 <TagBox
                   items={europeanUnion}
                   defaultValue={[europeanUnion[0].id]}
-                  rtlEnabled={this.state.rtlEnabled}
-                  displayExpr={this.displayExpr}
+                  rtlEnabled={rtlEnabled}
+                  displayExpr={displayExpr}
                   placeholder="..."
                   valueExpr="id"
                 />
@@ -110,8 +103,9 @@ class NewPost extends React.Component {
               <div className="dx-field-label">Text Area</div>
               <div className="dx-field-value">
                 <TextArea
-                  defaultValue={this.textValue}
-                  rtlEnabled={this.state.rtlEnabled}
+                  rtlEnabled={rtlEnabled}
+                  value={note}
+                  onValueChanged = {e => setNote(e.value)}
                 />
               </div>
             </div>
@@ -120,8 +114,8 @@ class NewPost extends React.Component {
               <div className="dx-field-value">
                 <Autocomplete
                   items={europeanUnion}
-                  rtlEnabled={this.state.rtlEnabled}
-                  valueExpr={this.displayExpr}
+                  rtlEnabled={rtlEnabled}
+                  valueExpr={displayExpr}
                 />
               </div>
             </div>
@@ -130,22 +124,28 @@ class NewPost extends React.Component {
               <div className="dx-field-value">
                 <CheckBox
                   defaultValue={true}
-                  text={this.textValue}
-                  rtlEnabled={this.state.rtlEnabled}
+                  text={title}
+                  rtlEnabled={rtlEnabled}
                 />
               </div>
             </div>
             <div className="dx-field">
               <div className="dx-field-label">Switch</div>
               <div className="dx-field-value">
-                <Switch rtlEnabled={this.state.rtlEnabled} />
+                <Switch rtlEnabled={rtlEnabled} />
               </div>
+            </div>
+            <div className="dx-field">
+              <Button
+                text="Add Post"
+                onClick={addNewPost}
+              />
             </div>
           </div>
         </div>
       </div>
     );
-  }
+  
 }
 
 export default NewPost;
